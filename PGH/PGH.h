@@ -8,8 +8,9 @@
 #include<Windows.h>
 #include<time.h>
 using namespace std;
-
-
+string static ID;
+void create_Empty();
+void GUIDE();
 void GoodBye();
 void Welcome();
 void animation();
@@ -19,7 +20,9 @@ string decode(string encoded_pass);
 string encode(string generated_pass);
 string generate_Password();
 char getRandomchar();
-
+void create_Database();
+bool log();
+string getID();
 struct node
 {
     string data;
@@ -45,11 +48,11 @@ public:
     string Email, Website, PASSWORD;
 
 
-    void get_user_data();
-    void Save_Pass(string Website, string Email, string Encoded_pass);
+    bool creat_Entry();
+    void Save_Pass(string str);
     void Get_Pass();
     void Update(int position);
     void display();
     void delete_data(int pos);
-
+    bool get_info();
 };

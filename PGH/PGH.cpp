@@ -23,20 +23,31 @@ char getRandomchar()
 {
     return pool[rand() % poolSize];
 }
+
 int main()
 {
-    /* system("cls");
-     Time();
-     Welcome();
-     system("pause");*/
+    create_Empty();
+beg:
+    system("cls");
+    Time();
+    Welcome();
+    cout << "First time Entry please enter 'Admin' as your ID.\n";
+    if (log())
+    {
+        goto beg;
+       
+    }
+     string id = getID();
 start:
     Password user;
     int user_choice;
     system("cls");
     Time();
-    cout << "Select what you want to do: \n1.Show Existing Entry \n2.New Entry \n3.Update Entry \n4.Delete a Entry \n5.Exit" << endl;
+    GUIDE();    
+    cout << "ID :" << id << endl;
+    cout << "Select what you want to do: \n1.Show Existing Entry \n2.New Entry \n3.Update Entry \n4.Delete a Entry \n5.Switch Database \n6.Create Database \n7.Exit" << endl;
     cin >> user_choice;
-    enum { DISPLAY = 1, NEW, UPDATE, _DELETE, EXIT };
+    enum { DISPLAY = 1, NEW, UPDATE, _DELETE,SWITCH,CREAT, EXIT };
     switch (user_choice)
 
     {
@@ -45,25 +56,35 @@ start:
         system("cls");
         Time();
         animation();
+        system("cls");
         user.Get_Pass();
         system("pause");
         goto start;
 
     }
     case NEW:
-    { //ERROR :system not terminating on 0 as input investigate further .
+    { 
+        system("cls");
+        animation();
         system("cls");
         Time();
-        user.get_user_data();
-        animation();
-        cout << "Data Saved..." << endl;
+        if (user.creat_Entry())
+        {
+            goto start;
+        }
+        else
+        {
+            animation();
+            cout << "Data Saved..." << endl;
+        }
         system("pause");
         goto start;
 
     }
     case UPDATE:
     {
-        //ERROR :file when told to update first enrty add an entry prior positision to the first entry
+        system("cls");
+        animation();
         system("cls");
         Time();
         user.get_file_and_insert_to_linklist();
@@ -73,21 +94,49 @@ start:
         user.Update(user_choice);
         animation();
         goto start;
-
     }
-    case _DELETE:
+     case _DELETE:  //option to abruptly ending the delete program
     {
+         system("cls");
+         animation();
+         system("cls");
         user.get_file_and_insert_to_linklist();
-        user.Get_Pass();
-        cout << "Enter the line number you want to delete." << endl;
+        user.display(); // Fix Display
+        cout << "Enter the line number you want to delete. \n Enter 0 to delete all Entries." << endl;
         cin >> user_choice;
         user.delete_data(user_choice);
+        goto start;
+    }
+    case SWITCH:
+    {
+        system("cls");
+        if (log())
+        {
+            cout << "ID :Invalid ID Try Again." << endl;
+            Sleep(2000);
+            goto start;
+        }
+        else
+        {
+            id = getID();
+            animation();
+            system("cls");
+            cout << "Database Switched." << endl;
+            goto start;
+        }
+    }
+    case CREAT:
+    {
+        system("cls");
+        animation();
+        system("cls");
+        create_Database();
+        cout << "Database Created Sucessfully." << endl;
         goto start;
     }
     case EXIT:
     {
         GoodBye();
-        system("pause");
         exit(0);
         break;
     }
