@@ -2,7 +2,52 @@
 using namespace std;
 #pragma warning(disable : 4996)
 
+void create_Empty()
+{
+    ID = "main";
+    fstream datain;
+    datain.open(ID + ".dat", ios::in | ios::out | ios::binary);
+  
+    datain.close();
+}
+void GUIDE()
+{
+    cout << "Welcome to PGA (Password Generator and Archive). \n ";
+    cout << "This Program not allow you to generate your own creative passwords as well as store in them in a archive of your own Personally Assigned ID.\n";
+    cout << "The Purpose of the program was simple as to store long extremely hard password into one place to ensure smoother and safer operation. \n";
+    cout << "Now for a little detail on what each Option does :\n";
+    cout << "First option lets you display all the pass words that a currently stored in your archive with out the need of searching through all.\n";
+    cout << "Second option allows you to Insert a new email , password to your archive.\n";
+    cout << "Third option allows you to Update your entries in your archive.\n";
+    cout << "Fourth option allows you Delete a Entry/Entries in your archive.\n";
+    cout << "Fifth option allows you Switch between your one of many archives.\n";
+    cout << "Sixth option allows you to creat a whole new archive into your system.\n";
+    cout << "Seventh option allows you to leave the program. \n\n\n";
+}
+bool log()
+{
 
+    cout << "Enter your ID." << endl;
+    cout << "ID :"; cin >> ID;
+    //cout << "Password :"; cin >> Password;
+
+    fstream datain;
+    datain.open(ID + ".dat", ios::in | ios::out | ios::binary);
+    if (!datain)
+    {
+        return 1;
+    }
+    datain.close();
+    return 0;
+}
+void create_Database()
+ {
+     cout << "Enter your the ID you want to name Database :";
+     cin >> ID;
+     fstream data;
+     data.open(ID + ".dat", ios::out | ios::binary);
+     data.close();
+ }
 void animation()
 {
     cout << "Processing ..";
@@ -22,7 +67,8 @@ void animation()
     cout << ".";
     Sleep(75);
     cout << "." << endl;
-    cout << "...Process Completed..." << endl;
+    cout << "Process Completed!" << endl;
+    Sleep(1000);
 
 }
 void Welcome()
@@ -80,8 +126,12 @@ void GoodBye()
     cout << "    ****       ***********  ************  ***  ***  ***  *** ***           ***      ***      ***  ***   ***  " << endl;
     cout << "    ****       ***     ***  ***      ***  ***   *** ***  ***  ***          ***      ***      ***  ***   ***  " << endl;
     cout << "    ****       ***     ***  ***      ***  ***    ******  ***   ***         ***      ************  *********  " << endl;
+    Sleep(1500);
 }
-///////////////////////////////////////////////////////////////////
+string getID()
+{
+    return ID;
+}
 void Time()
 {
     string dt;
@@ -184,27 +234,39 @@ void linklist::delete_specific(int pos)
     node* current = new node;
     node* temp = new node;
     current = head;
-    for (int i = 0; i <= pos; i++)
+    if (head != NULL)
     {
-        if (pos == 0)
+
+    
+    if (pos == 0)
+    {
+       tail= head = NULL;
+    }
+    else
+    {
+        for (int i = 1; i <= pos + 1; i++)
         {
-            head = head->next;
-            break;
+            if (pos == 1)
+            {
+                head = head->next;
+                break;
+            }
+            else if (current->next == NULL)
+            {
+                tail = previous;
+                previous->next = NULL;
+                break;
+            }
+            if (i == pos)
+            {
+                previous->next = current->next;
+                current = NULL;
+                break;
+            }
+            previous = current;
+            current = current->next;
         }
-        else if (current->next == NULL)
-        {
-            tail = previous;
-            previous->next = NULL;
-            break;
-        }
-        if (i == pos)
-        {
-            previous->next = current->next;
-            current = NULL;
-            break;
-        }
-        previous = current;
-        current = current->next;
+    }
     }
 }
 void linklist::display_size()
@@ -224,7 +286,7 @@ void linklist::get_file_and_insert_to_linklist()
     head = NULL;
     string line;
     fstream data;
-    data.open("Passwords.text", ios::in | ios::out);
+    data.open(ID + ".dat", ios::in | ios::out | ios::binary);
 
     if (data.is_open())
     {
@@ -241,7 +303,7 @@ void linklist::save_data_linklist(node* head)
     node* temp = new node;
     temp = head;
     fstream data;
-    data.open("Passwords.text", ios::out);
+    data.open(ID + ".dat", ios::out | ios::binary);
     if (data.is_open())
     {
         while (temp != NULL)
@@ -253,7 +315,7 @@ void linklist::save_data_linklist(node* head)
     data.close();
 }
 ///////////////////////////////////////////////////////////////////
-void Password::get_user_data()
+bool Password::get_info()
 {
     int user_choice;
     cout << "Enter 0 to terminate Process.." << endl;
@@ -261,13 +323,13 @@ void Password::get_user_data()
     cin >> Website;
     if (terminate(Website[0]))
     {
-        exit;
+        return 1;
     }
     cout << "Email: \n";
     cin >> Email;
     if (terminate(Email[0]))
     {
-        exit;
+        return 1;
     }
     cout << "1.Enter Own Password \n2.Generate Password \n";
     cin >> user_choice;
@@ -280,15 +342,27 @@ void Password::get_user_data()
     {
         PASSWORD = generate_Password();
     }
-    Save_Pass(Website, Email, PASSWORD);
+    return 0;
 }
-void Password::Save_Pass(string Website, string Email, string Encoded_pass)
+bool Password::creat_Entry()
 {
-    string str = "\t" + Website + "\t\t" + Email + "\t\t\t" + Encoded_pass;
-
-    fstream dataout;
-    dataout.open("Passwords.text", ios::out | ios::app);
+    if (get_info())
     {
+        return 1;
+    }
+    else
+    {
+        string str = "\t" + Website + "\t\t" + Email + "\t\t\t" + PASSWORD;
+        Save_Pass(str);
+    }
+    return 0;
+}
+void Password::Save_Pass(string str)
+{
+    fstream dataout;
+    dataout.open(ID + ".dat", ios::out | ios::app | ios::binary);
+    {
+        
         dataout << encode(str) << endl;
     }
     dataout.close();
@@ -298,7 +372,7 @@ void Password::Get_Pass()
     string line;
     int count = 1;
     fstream datain;
-    datain.open("Passwords.text", ios::in);
+    datain.open(ID + ".dat", ios::in |ios::binary);
     if (!datain)
     {
         cout << "File either does not exit or it was moved!! " << endl;
@@ -317,31 +391,7 @@ void Password::Update(int position)
     int user_choice;
     string str;
     delete_specific(position);
-    {
-        int user_choice = 0;
-        cout << "Enter 0 to terminate Process.." << endl;
-        cout << "Please enter the email and the website name. \n Website: \n";
-        cin >> Website;
-        if (terminate(Website[0]))
-        {
-            exit;
-        }
-        cout << "Email: \n";
-        cin >> Email;
-        if (terminate(Email[0]))
-        {
-            exit;
-        }
-        if (user_choice == 1)
-        {
-            cout << "Enter Password: ";
-            cin >> PASSWORD;
-        }
-        else if (user_choice == 2)
-        {
-            PASSWORD = generate_Password();
-        }
-    }
+    get_info();
     str = "\t" + Website + "\t\t" + Email + "\t\t\t" + PASSWORD;
 
     cout << endl;
@@ -355,6 +405,7 @@ void Password::display()
     node* temp = new node;
     temp = head;
     int count = 1;
+    cout << "\tSr." << "\t\tWEBSITE \tEMAIL \t\t\t\tPassword\t\t\n";
     while (temp != NULL)
     {
         cout << count << "\t" << temp->data << endl;
